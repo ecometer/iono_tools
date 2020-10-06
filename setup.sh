@@ -11,6 +11,7 @@ mkdir -p $AUTH_PATH
 if [[ ! -f $AUTH_FILE ]]
 then
     touch $AUTH_FILE
+    chmod 400 $AUTH_FILE
 fi
 
 

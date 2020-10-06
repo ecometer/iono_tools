@@ -30,7 +30,7 @@ IONO_BUS2=28-xxxxxxxxxxxx
 
 # path configuration
 STAT_FILE="$HOME/di1.high"
-DATA_FILE="$HOME/iono.csv"
+DATA_FILE="$HOME/iono-di.csv"
 
 # remove stat file id first run in the hour
 minute="$(date +%M)"
@@ -82,24 +82,4 @@ ONEWIRE1=${ONEWIRE1/./,}
 echo "Append data to pipe file..."
 echo "$DI1;$DI2;$DI3;$DI4;$DI5;$DI6;$ONEWIRE1;$ONEWIRE2" > $DATA_FILE
 
-# :: ssh keys
-# :: ssh-keygen -> C:\Users\ARPAL/.ssh/id_rsa
-# :: scp C:\Users\ARPAL/.ssh/id_rsa.pub pi@192.168.1.xxx:\.ssh\authorized_keys
-
-# cronrab
-
-# get data from iono module
-# * * * * * /home/pi/get-iono-data.sh
-# * * * * * sleep 5; /home/pi/get-iono-data.sh
-# * * * * * sleep 10; /home/pi/get-iono-data.sh
-# * * * * * sleep 15; /home/pi/get-iono-data.sh
-# * * * * * sleep 20; /home/pi/get-iono-data.sh
-# * * * * * sleep 25; /home/pi/get-iono-data.sh
-# * * * * * sleep 30; /home/pi/get-iono-data.sh
-# * * * * * sleep 35; /home/pi/get-iono-data.sh
-# * * * * * sleep 40; /home/pi/get-iono-data.sh
-# * * * * * sleep 45; /home/pi/get-iono-data.sh
-# * * * * * sleep 50; /home/pi/get-iono-data.sh
-# * * * * * sleep 55; /home/pi/get-iono-data.sh
-
-# ps aux | grep "get-iono-data.sh"
+exit 0
