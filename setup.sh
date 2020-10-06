@@ -48,7 +48,7 @@ END
 if crontab -l | grep -q 'get-iono-data.sh'; then
     echo "cron jobs already exists"
 else
-    echo "addin cron jobs..."
+    echo "adding cron jobs..."
     (crontab -u pi -l; echo "$CRONJOBS" ) | crontab -u pi -
 fi
 
