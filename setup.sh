@@ -2,14 +2,13 @@
 
 # run and execute
 # wget -O - https://raw.githubusercontent.com/ecometer/iono_tools/main/setup.sh | bash
-#
 
 # create need files
 echo "creating authorized key file..."
 AUTH_PATH="$HOME/.ssh"
 AUTH_FILE="$HOME/.ssh/authorized_keys"
 mkdir -p $AUTH_PATH
-if [[ -ne $AUTH_FILE ]]
+if [[ ! -f $AUTH_FILE ]]
 then
 	touch $AUTH_FILE
 fi
