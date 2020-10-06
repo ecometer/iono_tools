@@ -41,7 +41,7 @@ CRONJOBS=$(cat <<-END
 END
 )
 
-if ! crontab -l | grep -q 'get-iono-data.sh'; then
+if crontab -l | grep -q 'get-iono-data.sh'; then
     echo "cron jobs already exists"
 else
     echo "addin cron jobs..."
