@@ -40,7 +40,13 @@ CRONJOBS=$(cat <<-END
 # * * * * * sleep 55; $HOME/get-iono-data.sh
 END
 )
-(crontab -u pi -l; echo "$CRONJOBS" ) | crontab -u pi -
+
+if ! crontab -l | grep -q 'get-iono-data.sh'; then
+    echo "cron jobs already exists"
+else
+    echo "addin cron jobs..."
+    (crontab -u pi -l; echo "$CRONJOBS" ) | crontab -u pi -
+fi
 
 
 # end
