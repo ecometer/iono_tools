@@ -17,7 +17,7 @@ fi
 # get script
 echo "getting script..."
 wget -O $HOME/get-iono-data.sh https://raw.githubusercontent.com/ecometer/iono_tools/main/get-iono-data.sh
-
+chmod +x $HOME/get-iono-data.sh
 
 # add commands to crontab
 echo "adding crontab job..."
