@@ -10,19 +10,18 @@ AUTH_FILE="$HOME/.ssh/authorized_keys"
 mkdir -p $AUTH_PATH
 if [[ ! -f $AUTH_FILE ]]
 then
-	touch $AUTH_FILE
+    touch $AUTH_FILE
 fi
 
 
 # get script
-echo "getting script.."
+echo "getting script..."
 wget -O $HOME/get-iono-data.sh https://raw.githubusercontent.com/ecometer/iono_tools/main/get-iono-data.sh
 
 
 # add commands to crontab
-echo "adding crontab job.."
+echo "adding crontab job..."
 CRONJOBS=$(cat <<-END
-
 #
 # get data from iono module every fife seconds
 # to catch open door DI contact
@@ -38,7 +37,7 @@ CRONJOBS=$(cat <<-END
 # * * * * * sleep 40; $HOME/get-iono-data.sh
 # * * * * * sleep 45; $HOME/get-iono-data.sh
 # * * * * * sleep 50; $HOME/get-iono-data.sh
-# * * * * * sleep 55; $HOME/get-iono-data.sh 
+# * * * * * sleep 55; $HOME/get-iono-data.sh
 END
 )
 (crontab -u paolo -l; echo "$CRONJOBS" ) | crontab -u paolo -
