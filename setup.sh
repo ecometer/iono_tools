@@ -40,7 +40,7 @@ CRONJOBS=$(cat <<-END
 # * * * * * sleep 55; $HOME/get-iono-data.sh
 END
 )
-(crontab -u paolo -l; echo "$CRONJOBS" ) | crontab -u paolo -
+(crontab -u pi -l; echo "$CRONJOBS" ) | crontab -u pi -
 
 
 # end
