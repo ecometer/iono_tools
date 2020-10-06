@@ -30,7 +30,7 @@ IONO_BUS2=28-xxxxxxxxxxxx
 
 # path configuration
 STAT_FILE="$HOME/di1.high"
-DATA_FILE="$HOME/iono-di.csv"
+DATA_FILE="$HOME/iono.csv"
 
 # remove stat file id first run in the hour
 minute="$(date +%M)"
