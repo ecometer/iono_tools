@@ -2,6 +2,9 @@
 
 # run and execute
 # wget -O - https://raw.githubusercontent.com/ecometer/iono_tools/main/setup.sh | bash
+echo
+echo
+echo "*************  iono setup script *************"
 
 # create need files
 echo "creating authorized key file..."
@@ -11,7 +14,7 @@ mkdir -p $AUTH_PATH
 if [[ ! -f $AUTH_FILE ]]
 then
     touch $AUTH_FILE
-    chmod 400 $AUTH_FILE
+    chmod 600 $AUTH_FILE
 fi
 
 
@@ -27,18 +30,18 @@ CRONJOBS=$(cat <<-END
 # get data from iono module every fife seconds
 # to catch open door DI contact
 #
-# * * * * * $HOME/get-iono-data.sh
-# * * * * * sleep  5; $HOME/get-iono-data.sh
-# * * * * * sleep 10; $HOME/get-iono-data.sh
-# * * * * * sleep 15; $HOME/get-iono-data.sh
-# * * * * * sleep 20; $HOME/get-iono-data.sh
-# * * * * * sleep 25; $HOME/get-iono-data.sh
-# * * * * * sleep 30; $HOME/get-iono-data.sh
-# * * * * * sleep 35; $HOME/get-iono-data.sh
-# * * * * * sleep 40; $HOME/get-iono-data.sh
-# * * * * * sleep 45; $HOME/get-iono-data.sh
-# * * * * * sleep 50; $HOME/get-iono-data.sh
-# * * * * * sleep 55; $HOME/get-iono-data.sh
+* * * * * $HOME/get-iono-data.sh
+* * * * * sleep  5; $HOME/get-iono-data.sh
+* * * * * sleep 10; $HOME/get-iono-data.sh
+* * * * * sleep 15; $HOME/get-iono-data.sh
+* * * * * sleep 20; $HOME/get-iono-data.sh
+* * * * * sleep 25; $HOME/get-iono-data.sh
+* * * * * sleep 30; $HOME/get-iono-data.sh
+* * * * * sleep 35; $HOME/get-iono-data.sh
+* * * * * sleep 40; $HOME/get-iono-data.sh
+* * * * * sleep 45; $HOME/get-iono-data.sh
+* * * * * sleep 50; $HOME/get-iono-data.sh
+* * * * * sleep 55; $HOME/get-iono-data.sh
 END
 )
 
