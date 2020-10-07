@@ -84,6 +84,7 @@ echo "ONEWIRE1: $ONEWIRE1"
 echo "ONEWIRE2: $ONEWIRE2"
 # replace dot with comma
 ONEWIRE1=${ONEWIRE1/./,}
+ONEWIRE2=${ONEWIRE2/./,}
 
 # create csv file
 echo "Append data to pipe file..."
