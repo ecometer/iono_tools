@@ -17,7 +17,6 @@ then
     chmod 600 $AUTH_FILE
 fi
 
-
 # get script
 echo "getting script..."
 wget -O $HOME/get-iono-data.sh https://raw.githubusercontent.com/ecometer/iono_tools/main/get-iono-data.sh
@@ -44,14 +43,13 @@ CRONJOBS=$(cat <<-END
 * * * * * sleep 55; $HOME/get-iono-data.sh
 END
 )
-
+# check if command already exists
 if crontab -l | grep -q 'get-iono-data.sh'; then
     echo "cron jobs already exists"
 else
     echo "adding cron jobs..."
     (crontab -u pi -l; echo "$CRONJOBS" ) | crontab -u pi -
 fi
-
 
 # end
 echo "all done!"

@@ -1,18 +1,20 @@
 #!/bin/bash
-#
-# Purposes: get data from iono module
-#--------------------------------------------------------
-
+#-- ----------------------------------------------------------------------
+#--  Copyright (c) 2020, OPAS
+#--   _____ _____ _____ _____
+#--  |     |  _  |  _  |   __|
+#--  |  |  |   __|     |__   |
+#--  |_____|__|  |__|__|_____|
+#--
+#--  Author: Paolo Saudin.
+#--  Script: get-iono-data.sh
+#--  Purposes: get data from iono module
+#--  Date : 2020-10-07 08:15
+#-- ----------------------------------------------------------------------
 # lock dir/file
 BASEDIR=$(dirname $0)
 SCRIPTFILE=$(basename $0)
 LOCKFILE="${BASEDIR}/${SCRIPTFILE}.pid"
-#echo $LOCKFILE
-
-echo
-echo "Running script -> $SCRIPTFILE @ date"
-echo "Lockfile -> $LOCKFILE"
-
 # script already running check
 if [ -e $LOCKFILE ] && kill -0 cat $LOCKFILE
 then
@@ -20,17 +22,22 @@ then
     exit
 fi
 trap "rm -fv $LOCKFILE; exit" INT TERM EXIT
-#echo $$ > $LOCKFILE
 
 # ok to run
+echo
+echo "Running script -> $SCRIPTFILE @ $(date)"
 
+#
 # iono configuration
-IONO_BUS1=28-01145e8257f4
-IONO_BUS2=28-xxxxxxxxxxxx
+# iono 1wire bus -> gets ids 28-xxxxxxxxxxxx
+# leave empty to skip reading
+#
+IONO_BUS1=
+IONO_BUS2=
 
 # path configuration
 STAT_FILE="$HOME/di1.high"
-DATA_FILE="$HOME/iono-di.csv"
+DATA_FILE="$HOME/iono.csv"
 
 # remove stat file id first run in the hour
 minute="$(date +%M)"
@@ -70,8 +77,8 @@ echo "DI6: $DI6"
 
 # get data
 echo "Get iono 1wire sensors status..."
-ONEWIRE1=$(/usr/local/bin/iono 1wire bus $IONO_BUS1)
-ONEWIRE2=9999 # $(/usr/local/bin/iono 1wire bus $IONO_BUS2)
+[[ $IONO_BUS1 == "" ]] && ONEWIRE1= || ONEWIRE1=$(/usr/local/bin/iono 1wire bus $IONO_BUS1)
+[[ $IONO_BUS2 == "" ]] && ONEWIRE2= || ONEWIRE2=$(/usr/local/bin/iono 1wire bus $IONO_BUS2)
 # print values
 echo "ONEWIRE1: $ONEWIRE1"
 echo "ONEWIRE2: $ONEWIRE2"
