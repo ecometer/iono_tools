@@ -8,7 +8,7 @@ wget -O - https://raw.githubusercontent.com/ecometer/iono_tools/main/setup.sh | 
 * windows DOS
 ```bash
 ssh-keygen
-scp C:\Users\ARPAL/.ssh/id_rsa.pub pi@192.168.1.xxx:\home\pi\\.ssh\authorized_keys
+scp C:\Users\ARPAL/.ssh/id_rsa.pub pi@192.168.1.xxx:\home\pi\.ssh\authorized_keys
 ```
 * crontab
 ```
