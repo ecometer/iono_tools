@@ -1,6 +1,6 @@
 #!/bin/bash
 #-- ----------------------------------------------------------------------
-#--  Copyright (c) 2020, OPAS
+#--  Copyright (c) 2021, OPAS
 #--   _____ _____ _____ _____
 #--  |     |  _  |  _  |   __|
 #--  |  |  |   __|     |__   |
@@ -9,7 +9,7 @@
 #--  Author: Paolo Saudin.
 #--  Script: get-iono-data.sh
 #--  Purposes: get data from iono module
-#--  Date : 2020-10-07 08:15
+#--  Date : 2021-02-16 10:07
 #-- ----------------------------------------------------------------------
 # lock dir/file
 BASEDIR=$(dirname $0)
@@ -37,6 +37,7 @@ IONO_BUS2=
 
 # path configuration
 STAT_FILE="$HOME/di1.high"
+ONEW_FILE="$HOME/1wire.csv"
 DATA_FILE="$HOME/iono.csv"
 
 # remove stat file id first run in the hour
@@ -75,19 +76,36 @@ echo "DI4: $DI4"
 echo "DI5: $DI5"
 echo "DI6: $DI6"
 
-# get data
-echo "Get iono 1wire sensors status..."
-[[ $IONO_BUS1 == "" ]] && ONEWIRE1= || ONEWIRE1=$(/usr/local/bin/iono 1wire bus $IONO_BUS1)
-[[ $IONO_BUS2 == "" ]] && ONEWIRE2= || ONEWIRE2=$(/usr/local/bin/iono 1wire bus $IONO_BUS2)
-# print values
-echo "ONEWIRE1: $ONEWIRE1"
-echo "ONEWIRE2: $ONEWIRE2"
-# replace dot with comma
-ONEWIRE1=${ONEWIRE1/./,}
-ONEWIRE2=${ONEWIRE2/./,}
+# get 1 wire data
+second="$(date +%S)"
+if [[ second -lt 5 ]]
+then
+    echo "Get iono 1wire sensors data..."
+    [[ $IONO_BUS1 == "" ]] && ONEWIRE1= || ONEWIRE1=$(/usr/local/bin/iono 1wire bus $IONO_BUS1)
+    [[ $IONO_BUS2 == "" ]] && ONEWIRE2= || ONEWIRE2=$(/usr/local/bin/iono 1wire bus $IONO_BUS2)
+    # print values
+    echo "ONEWIRE1: $ONEWIRE1"
+    echo "ONEWIRE2: $ONEWIRE2"
+    # replace dot with comma
+    ONEWIRE1=${ONEWIRE1/./,}
+    ONEWIRE2=${ONEWIRE2/./,}
+
+    # create csv file
+    echo "Append 1wire data to file..."
+    echo "$ONEWIRE1;$ONEWIRE2" > $ONEW_FILE
+else
+    if [[ -e $ONEW_FILE ]]
+    then
+        echo "Get 1wire data from file..."
+        ONEW_DATA="`cat $ONEW_FILE`"
+    else
+        echo "No 1wire file, append ';'..."
+        ONEW_DATA=";"
+    fi
+fi
 
 # create csv file
 echo "Append data to pipe file..."
-echo "$DI1;$DI2;$DI3;$DI4;$DI5;$DI6;$ONEWIRE1;$ONEWIRE2" > $DATA_FILE
+echo "$DI1;$DI2;$DI3;$DI4;$DI5;$DI6;$ONEW_DATA" > $DATA_FILE
 
 exit 0
