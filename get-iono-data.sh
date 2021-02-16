@@ -41,7 +41,7 @@ ONEW_FILE="$HOME/1wire.csv"
 DATA_FILE="$HOME/iono.csv"
 
 # remove stat file id first run in the hour
-minute="$(date +%M)"
+minute="$(date +%-M)"
 if [[ minute -eq 0 && -e $STAT_FILE ]]
 then
     rm $STAT_FILE
@@ -77,7 +77,7 @@ echo "DI5: $DI5"
 echo "DI6: $DI6"
 
 # get 1 wire data
-second="$(date +%S)"
+second="$(date +%-S)"
 if [[ second -lt 5 ]]
 then
     echo "Get iono 1wire sensors data..."
@@ -93,11 +93,13 @@ then
     # create csv file
     echo "Append 1wire data to file..."
     echo "$ONEWIRE1;$ONEWIRE2" > $ONEW_FILE
+    # set new data
+    ONEW_DATA="$ONEWIRE1;$ONEWIRE2"
 else
     if [[ -e $ONEW_FILE ]]
     then
         echo "Get 1wire data from file..."
-        ONEW_DATA="`cat $ONEW_FILE`"
+        ONEW_DATA="$(cat $ONEW_FILE)"
     else
         echo "No 1wire file, append ';'..."
         ONEW_DATA=";"
