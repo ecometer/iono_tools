@@ -15,3 +15,9 @@ scp C:\Users\ARPAL/.ssh/id_rsa.pub pi@192.168.1.xxx:\home\pi\.ssh\authorized_key
 # get iono sensors data
 * * * * * C:\OPAS-SUPPORT\Sferalabs\get_iono_data.bat
 ```
+
+
+# only update script
+```bash
+wget -O ~/get-iono-data.sh https://raw.githubusercontent.com/ecometer/iono_tools/main/get-iono-data.sh
+```
