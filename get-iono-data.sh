@@ -81,8 +81,14 @@ second="$(date +%-S)"
 if [[ second -lt 5 ]]
 then
     echo "Get iono 1wire sensors data..."
+    # close contact
+    $(/usr/local/bin/iono o1 close) # o<n> close Close relay output o<n> (<n>=1..4)
+    sleep 1
+    # read the values
     [[ $IONO_BUS1 == "" ]] && ONEWIRE1= || ONEWIRE1=$(/usr/local/bin/iono 1wire bus $IONO_BUS1)
     [[ $IONO_BUS2 == "" ]] && ONEWIRE2= || ONEWIRE2=$(/usr/local/bin/iono 1wire bus $IONO_BUS2)
+    # open contact
+    $(/usr/local/bin/iono o1 open) # o<n> open Open relay output o<n> (<n>=1..4)
     # print values
     echo "ONEWIRE1: $ONEWIRE1"
     echo "ONEWIRE2: $ONEWIRE2"
