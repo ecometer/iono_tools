@@ -1,0 +1,143 @@
++---------------------------------------+
+| USING ionoPi IN READ-ONLY FILE SYSTEM |
++---------------------------------------+---------------------------------------------------------------------------------+
+| https://medium.com/@andreas.schallwig/how-to-make-your-raspberry-pi-file-system-read-only-raspbian-stretch-80c0f7be7353 |
++-------------------------------------------------------------------------------------------------------------------------+
+
+-- INSTALL IONO + SCRIPTS "get-iono-data.sh" and "ro-get-iono-data.sh"
+$ sudo apt update && sudo apt upgrade
+$ sudo raspi-config
+|
+v (enable "SPI" and "1-Wire")
+- select "Interface Options"
+- select "SPI"
+- select "Yes"
+- select "1-Wire"
+- select "Yes"
+- select "Finish"
+- (accept the reboot)
+$ sudo apt install git
+$ git clone --depth 1 https://github.com/sfera-labs/iono-pi-c-lib.git
+$ cd iono-pi-c-lib/
+$ sudo chmod +x build
+$ sudo ./build
+-- get the Read-Write script
+$ wget $HOME/get-iono-data.sh https://raw.githubusercontent.com/ecometer/iono_tools/main/get-iono-data.sh
+-- get the Read-Only script
+$ wget $HOME/ro-get-iono-data.sh https://raw.githubusercontent.com/ecometer/iono_tools/main/ro-get-iono-data.sh
+$ chmod +x get-iono-data.sh
+$ chmod +x ro-get-iono-data.sh
+-- try it
+$ ./get-iono-data.sh
+$ ./ro-get-iono-data.sh
+
+-- GET 1WIRE BUS ID AND ADD IT TO THE SCRIPT
+$ iono 1wire bus
+|
+v
+-- example:
+28-012022e2ba8e
+$ nano ro-get-iono-data.sh
+|
+v
+...
+...
+# iono configuration
+# iono 1wire bus -> gets ids 28-xxxxxxxxxxxx
+# leave empty to skip reading
+IONO_BUS1=28-012022e2ba8e   (<-- REPLACE/ADD IT HERE)
+...
+...
+-- save it and exit
+-- try the script
+$ ./ro-get-iono-data.sh
+0;0;0;0;0;0;29,062;
+
+-- SWITCHABLE READ-ONLY FILE SYSTEM
+$ sudo apt update && sudo apt upgrade
+$ sudo apt-get remove --purge wolfram-engine triggerhappy anacron logrotate dphys-swapfile xserver-common lightdm
+$ sudo systemctl disable x11-common
+$ sudo apt-get autoremove --purge
+$ sudo systemctl disable bootlogs
+$ sudo systemctl disable console-setup
+$ sudo apt-get install busybox-syslogd
+$ sudo dpkg --purge rsyslog
+$ sudo nano /boot/cmdline.txt
+|
+v (add this at the end of line:)
+fastboot noswap ro
+-- save it and exit
+$ sudo rm -rf /var/lib/dhcp /var/lib/dhcpcd5 /var/run /var/spool /var/lock /etc/resolv.conf
+$ sudo ln -s /tmp /var/lib/dhcp
+$ sudo ln -s /tmp /var/lib/dhcpcd5
+$ sudo ln -s /tmp /var/run
+$ sudo ln -s /tmp /var/spool
+$ sudo ln -s /tmp /var/lock
+$ sudo touch /tmp/dhcpcd.resolv.conf
+$ sudo ln -s /tmp/dhcpcd.resolv.conf /etc/resolv.conf
+$ sudo nano /etc/systemd/system/dhcpcd5
+|
+v (edit/create file with this line)
+PIDFile=/var/run/dhcpcd.pid
+-- save it and exit
+$ sudo rm /var/lib/systemd/random-seed
+$ sudo ln -s /tmp/random-seed /var/lib/systemd/random-seed
+$ sudo nano /lib/systemd/system/systemd-random-seed.service
+|
+v (add this under the "[Service]" section)
+RemainAfterExit=yes
+ExecStartPre=/bin/echo "" >/tmp/random-seed     (<-- ADD IT HERE)
+ExecStart=/lib/systemd/systemd-random-seed load
+-- save it and exit
+$ sudo systemctl daemon-reload
+$ sudo nano /etc/fstab
+|
+v (add ",ro" flag to all block devices)
+...
+PARTUUID=510f711c-01  /boot           vfat    defaults,ro           (<-- ADD IT HERE)  0       2
+PARTUUID=510f711c-02  /               ext4    defaults,noatime,ro   (<-- ADD IT HERE)  0       1
+  (add the entries for the temporary file system at the end of the file)
+...
+tmpfs           /tmp            tmpfs   nosuid,nodev         0       0
+tmpfs           /var/log        tmpfs   nosuid,nodev         0       0
+tmpfs           /var/tmp        tmpfs   nosuid,nodev         0       0
+-- save it and exit
+$ sudo nano /etc/bash.bashrc
+|
+v (add the following lines at the end of the file)
+...
+...
+set_bash_prompt() {
+    fs_mode=$(mount | sed -n -e "s/^\/dev\/.* on \/ .*(\(r[w|o]\).*/\1/p")
+    PS1='\[\033[01;32m\]\u@\h${fs_mode:+($fs_mode)}\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+}
+alias ro='sudo mount -o remount,ro / ; sudo mount -o remount,ro /boot'
+alias rw='sudo mount -o remount,rw / ; sudo mount -o remount,rw /boot'
+
+PROMPT_COMMAND=set_bash_prompt
+-- save it and exit
+$ sudo nano /etc/bash.bash_logout
+|
+v (add the following lines at the end of the file)
+...
+...
+mount -o remount,ro /
+mount -o remount,ro /boot
+-- save it and exit
+$ sudo reboot
+
+
+-- END:
+* Is possible to switch from READ-WRITE to READ-ONLY and viceversa using commands "rw" (READ-WRITE) and "ro" (READ-ONLY);
+* The current file system mode is displayed after the hostname, between round brackets:
+-- example:
+ionotest@raspberrypi(ro):~$    |    ionotest@raspberrypi(rw):~$
+* Everytime, at reboot, the file system will be set to READ-ONLY, even if is in READ-WRITE mode.
+
+-- CALLING THE SCRIPT:
+(FORM IONO) $ ./ro-get-iono-data.sh
+(REMOTELY)  $ ssh USERNAME@HOSTNAME_OR_IP ./ro-get-iono-data.sh
+-- example:
+$ ssh USERNAME@HOSTNAME_OR_IP ./ro-get-iono-data.sh
+USERNAME@HOSTNAME_OR_IP's password: (INSERT PASSWORD...)
+0;0;0;0;0;0;29,062;
