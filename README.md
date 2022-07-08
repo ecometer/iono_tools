@@ -17,7 +17,11 @@ scp C:\Users\ARPAL/.ssh/id_rsa.pub pi@192.168.1.xxx:\home\pi\.ssh\authorized_key
 ```
 
 
-# only update script
+# only update scripts
 ```bash
+# Read-Write filesystem script
 wget -O ~/get-iono-data.sh https://raw.githubusercontent.com/ecometer/iono_tools/main/get-iono-data.sh
+
+# Read-Only filesystem script
+wget -O ~/ro-get-iono-data.sh https://raw.githubusercontent.com/ecometer/iono_tools/main/ro-get-iono-data.sh
 ```
